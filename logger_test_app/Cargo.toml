@@ -1,0 +1,8 @@
+[package]
+name = "logger_test_app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+daily-logger = { path = "../../logwise" }
+log = "0.4"

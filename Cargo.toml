@@ -1,0 +1,10 @@
+[package]
+name = "daily-logger"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.41"
+dashmap = "6.1.0"
+log = { version = "0.4.27", features = ["kv"] }
+once_cell = "1.21.3"
