@@ -3,7 +3,7 @@ name = "daily-logger"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-repository = "https://github.com/rust-lang/cargo"
+repository = "https://github.com/xukangmin/daily-logger"
 description = "A Rust logging library that provides daily file rotation and colored console output with support for order-specific logging."
 
 [dependencies]
