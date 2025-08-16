@@ -13,7 +13,7 @@ use std::{
 };
 
 const MAX_CACHE_SIZE: usize = 32;
-static LOGGER: Lazy<KioskLogger> = Lazy::new(KioskLogger::new);
+static LOGGER: Lazy<DailyLogger> = Lazy::new(DailyLogger::new);
 static FILE_CACHE: Lazy<Mutex<FileCache>> =
     Lazy::new(|| Mutex::new(FileCache::new(MAX_CACHE_SIZE)));
 
@@ -24,13 +24,13 @@ pub fn init_logger(stdout_level: log::LevelFilter, file_level: log::LevelFilter,
     log::set_max_level(stdout_level.max(file_level));
 }
 
-pub struct KioskLogger {
+pub struct DailyLogger {
     base_path: Mutex<Option<PathBuf>>,
     stdout_level: Mutex<log::LevelFilter>,
     file_level: Mutex<log::LevelFilter>,
 }
 
-impl KioskLogger {
+impl DailyLogger {
     fn new() -> Self {
         Self {
             base_path: Mutex::new(None),
@@ -54,7 +54,7 @@ impl KioskLogger {
     }
 }
 
-impl Log for KioskLogger {
+impl Log for DailyLogger {
     fn enabled(&self, metadata: &Metadata) -> bool {
         metadata.level() <= log::max_level()
     }
