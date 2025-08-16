@@ -14,7 +14,8 @@ use std::{
 
 const MAX_CACHE_SIZE: usize = 32;
 static LOGGER: Lazy<KioskLogger> = Lazy::new(KioskLogger::new);
-static FILE_CACHE: Lazy<Mutex<FileCache>> = Lazy::new(|| Mutex::new(FileCache::new(MAX_CACHE_SIZE)));
+static FILE_CACHE: Lazy<Mutex<FileCache>> =
+    Lazy::new(|| Mutex::new(FileCache::new(MAX_CACHE_SIZE)));
 
 pub fn init_logger(stdout_level: log::LevelFilter, file_level: log::LevelFilter, base_path: impl Into<PathBuf>) {
     LOGGER.set_base_path(base_path.into());
@@ -79,7 +80,7 @@ impl Log for KioskLogger {
         
         let key_values = record.key_values();
         if let Some(uuid) = key_values.get(Key::from("uuid")) {
-            let file_name = format!("order_{}.log", uuid);
+            let file_name = format!("order_{uuid}.log");
 
             log_entry = format!(
                 "{}-{}|[{}]<{}>:{}",
@@ -97,13 +98,13 @@ impl Log for KioskLogger {
 
         if record.level() <= stdout_level {
             let colored_entry = match record.level() {
-                Level::Error => format!("\x1b[31m{}\x1b[0m", log_entry),
-                Level::Warn => format!("\x1b[33m{}\x1b[0m", log_entry),
-                Level::Info => format!("\x1b[32m{}\x1b[0m", log_entry),
-                Level::Debug => format!("\x1b[34m{}\x1b[0m", log_entry),
-                Level::Trace => format!("\x1b[90m{}\x1b[0m", log_entry),
+                Level::Error => format!("\x1b[31m{log_entry}\x1b[0m"),
+                Level::Warn => format!("\x1b[33m{log_entry}\x1b[0m"),
+                Level::Info => format!("\x1b[32m{log_entry}\x1b[0m"),
+                Level::Debug => format!("\x1b[34m{log_entry}\x1b[0m"),
+                Level::Trace => format!("\x1b[90m{log_entry}\x1b[0m"),
             };
-            println!("{}", colored_entry);
+            println!("{colored_entry}");
         }
 
         if record.level() <= file_level {
@@ -119,7 +120,7 @@ fn write_to_file(file_name: &str, log_entry: &str, base_path: Option<PathBuf>) {
     let mut cache = FILE_CACHE.lock().unwrap();
     let full_path = base_path.map(|base| base.join(file_name)).unwrap_or_else(|| PathBuf::from(file_name));
     let writer = cache.get_or_open(full_path);
-    let _ = writeln!(writer, "{}", log_entry);
+    let _ = writeln!(writer, "{log_entry}");
     let _ = writer.flush();
 }
 
@@ -404,18 +405,17 @@ mod tests {
     #[test]
     fn test_directory_creation() {
         let (test_base, _guard) = setup_test_dir("directory");
-        
         let nested_uuid = "nested-dir-test";
         info!(target: "nested_test", uuid = nested_uuid; "Testing nested directory creation");
-        
         wait_for_file_operations();
-        
+
         let nested_file = test_base.join("order_nested-dir-test.log");
-        assert!(nested_file.exists(), "Nested directory test file should exist");
-        
+        assert!(
+            nested_file.exists(),
+            "Nested directory test file should exist"
+        );
         let content = fs::read_to_string(&nested_file).expect("Should read nested test file");
         assert!(content.contains("Testing nested directory creation"));
-        
         cleanup_test_dir(&test_base);
     }
 }
