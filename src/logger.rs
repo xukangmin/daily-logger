@@ -101,7 +101,7 @@ impl Log for DailyLogger {
                 Level::Error => format!("\x1b[31m{log_entry}\x1b[0m"),
                 Level::Warn => format!("\x1b[33m{log_entry}\x1b[0m"),
                 Level::Info => format!("\x1b[32m{log_entry}\x1b[0m"),
-                Level::Debug => format!("\x1b[34m{log_entry}\x1b[0m"),
+                Level::Debug => format!("\x1b[37m{log_entry}\x1b[0m"),
                 Level::Trace => format!("\x1b[90m{log_entry}\x1b[0m"),
             };
             println!("{colored_entry}");
